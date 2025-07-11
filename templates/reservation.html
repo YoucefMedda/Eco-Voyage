@@ -1,0 +1,195 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réservation</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+      .reservation-container { max-width: 500px; margin: 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 12px #0001; padding: 32px; }
+      .reservation-container h2 { color: #2ecc71; margin-bottom: 18px; }
+      .reservation-form label { display: block; margin-top: 16px; font-weight: 500; }
+      .reservation-form input, .reservation-form select { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; margin-top: 4px; }
+      .reservation-form button { margin-top: 24px; width: 100%; background: #2ecc71; color: #fff; border: none; border-radius: 6px; padding: 12px; font-size: 1.1em; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+      .reservation-form button:hover { background: #27ae60; }
+      .reservation-info { background: #f6fff6; border-left: 4px solid #2ecc71; padding: 12px 18px; border-radius: 6px; margin-bottom: 18px; }
+      .messages { margin-bottom: 16px; }
+      .messages li { color: #c0392b; font-weight: 500; }
+    </style>
+</head>
+<body>
+    <nav class="navbar"> <!-- Barre de navigation réutilisée -->
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-leaf"></i>
+                <span>EcoVoyage</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="{% url 'home' %}"><i class="fas fa-home"></i> Accueil</a></li>
+                <li><a href="{% url 'destinations' %}"><i class="fas fa-map-marker-alt"></i> Destinations</a></li>
+                <li><a href="{% url 'hebergements' %}"><i class="fas fa-bed"></i> Hébergements</a></li>
+                <li><a href="{% url 'blog' %}"><i class="fas fa-blog"></i> Blog</a></li>
+                <li><a href="{% url 'about' %}"><i class="fas fa-info-circle"></i> À propos</a></li>
+            </ul>
+            <div class="nav-buttons">
+                {% if utilisateur %}
+                    <span class="nav-username">Bonjour, {{ utilisateur.nom }} !</span>
+                    <a href="{% url 'deconnexion' %}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+                {% else %}
+                    <a href="/connexion/" class="btn-login"><i class="fas fa-sign-in-alt"></i> Connexion</a>
+                    <a href="/inscription/" class="btn-signup"><i class="fas fa-user-plus"></i> Inscription</a>
+                {% endif %}
+            </div>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+    <div class="reservation-container">
+        <h2>Réserver : {{ hebergement.nom }}</h2>
+        <div class="reservation-info">
+            <b>Ville :</b> {{ hebergement.destination.nom }}<br>
+            <b>Type :</b> {{ hebergement.type }}<br>
+            <b>Prix :</b> {{ hebergement.prix_par_nuit }} € / nuit
+        </div>
+        <div style="margin-bottom:12px;font-weight:500;">Réservation au nom de : <span style="color:#2ecc71;">{{ utilisateur.nom }}</span></div>
+        {% if messages %}
+          <ul class="messages">
+            {% for message in messages %}
+              <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+        <form method="post" class="reservation-form" id="reservationForm">
+            {% csrf_token %}
+            <label for="type_chambre">Type de chambre</label>
+            <select name="type_chambre" id="type_chambre" required>
+                <option value="">Choisir...</option>
+                {% for type in types_disponibles %}
+                  <option value="{{ type }}">
+                    {% if type == 'studio' %}Studio{% endif %}
+                    {% if type == 'chambre_3p' %}Chambre 3 personnes{% endif %}
+                    {% if type == 'chambre_4p' %}Chambre 4 personnes{% endif %}
+                    {% if type == 'chambre_5p' %}Chambre 5 personnes{% endif %}
+                  </option>
+                {% endfor %}
+            </select>
+            <label for="date_arrivee">Date d'arrivée</label>
+            <input type="text" name="date_arrivee" id="date_arrivee" required>
+            <label for="date_depart">Date de départ</label>
+            <input type="text" name="date_depart" id="date_depart" required>
+            <button type="submit">Réserver</button>
+        </form>
+        <div id="coutTotal" style="margin-top:18px;font-weight:600;color:#2ecc71;"></div>
+        <div id="jsErrorMsg" style="color:#c0392b; font-weight:500; margin-top:10px;"></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+      // Dates réservées par type de chambre (injecté depuis Django)
+      const reservedDates = {{ reserved_dates|safe }};
+      const userBlockedDates = {{ user_blocked_dates|safe }};
+      const typeSelect = document.getElementById('type_chambre');
+      const arriveeInput = document.getElementById('date_arrivee');
+      const departInput = document.getElementById('date_depart');
+
+      function getDisabledDates(type) {
+        // Fusionner les dates pleines et les dates bloquées utilisateur
+        const reserved = reservedDates[type] || [];
+        return Array.from(new Set([...reserved, ...userBlockedDates]));
+      }
+
+      let arriveePicker = null;
+      let departPicker = null;
+
+      function updatePickers() {
+        const type = typeSelect.value;
+        const disabled = getDisabledDates(type);
+        const today = new Date().toISOString().slice(0,10);
+        if (arriveePicker) arriveePicker.destroy();
+        if (departPicker) departPicker.destroy();
+        arriveePicker = flatpickr(arriveeInput, {
+          dateFormat: "Y-m-d",
+          disable: disabled.map(d => d),
+          minDate: today,
+          locale: "fr",
+          onDayCreate: function(dObj, dStr, fp, dayElem) {
+            if (disabled.includes(dayElem.dateObj.toISOString().slice(0,10))) {
+              dayElem.style.background = '#ffdddd';
+              dayElem.style.color = '#c0392b';
+            }
+          }
+        });
+        departPicker = flatpickr(departInput, {
+          dateFormat: "Y-m-d",
+          disable: disabled.map(d => d),
+          minDate: today,
+          locale: "fr",
+          onDayCreate: function(dObj, dStr, fp, dayElem) {
+            if (disabled.includes(dayElem.dateObj.toISOString().slice(0,10))) {
+              dayElem.style.background = '#ffdddd';
+              dayElem.style.color = '#c0392b';
+            }
+          }
+        });
+      }
+
+      typeSelect.addEventListener('change', updatePickers);
+      updatePickers();
+
+      document.getElementById('reservationForm').addEventListener('submit', function(e) {
+        const errorDiv = document.getElementById('jsErrorMsg');
+        errorDiv.textContent = "";
+        const arrivee = arriveeInput.value;
+        const depart = departInput.value;
+        const today = new Date().toISOString().slice(0,10);
+        if (arrivee && arrivee <= today) {
+          e.preventDefault();
+          errorDiv.textContent = "La date d'arrivée doit être postérieure à aujourd'hui.";
+        }
+        if (depart && depart <= today) {
+          e.preventDefault();
+          errorDiv.textContent = "La date de départ doit être postérieure à aujourd'hui.";
+        }
+        if (arrivee && depart && arrivee >= depart) {
+          e.preventDefault();
+          errorDiv.textContent = "La date de départ doit être strictement après la date d'arrivée.";
+        }
+        const type = typeSelect.value;
+        const dates = reservedDates[type] || [];
+        if (dates.includes(arrivee) || dates.includes(depart)) {
+          e.preventDefault();
+          errorDiv.textContent = "La date sélectionnée n'est pas disponible pour ce type de chambre.";
+        }
+      });
+
+      // Affichage dynamique du coût total
+      function updateCoutTotal() {
+        const type = typeSelect.value;
+        const prix = prixChambres[type] || 0;
+        const arrivee = arriveeInput.value;
+        const depart = departInput.value;
+        let nbNuits = 0;
+        if (arrivee && depart && arrivee < depart) {
+          const d1 = new Date(arrivee);
+          const d2 = new Date(depart);
+          nbNuits = Math.round((d2 - d1) / (1000*60*60*24));
+        }
+        const total = prix * nbNuits;
+        document.getElementById('coutTotal').textContent = (prix && nbNuits) ? `Coût total : ${total} € (${nbNuits} nuit${nbNuits>1?'s':''})` : '';
+      }
+      // Prix par type transmis par Django
+      const prixChambres = {{ prix_chambres|safe }};
+      typeSelect.addEventListener('change', updateCoutTotal);
+      arriveeInput.addEventListener('change', updateCoutTotal);
+      departInput.addEventListener('change', updateCoutTotal);
+      // Initialiser
+      updateCoutTotal();
+    </script>
+    <script src="{% static 'js/home.js' %}"></script>
+</body>
+</html> 

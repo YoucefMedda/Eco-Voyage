@@ -1,0 +1,252 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>À propos - EcoVoyage</title>
+    <link rel="stylesheet" href="{% static 'css/about.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    {% if messages %}
+      <div id="alertBox" style="position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:9999;min-width:320px;max-width:90vw;box-shadow:0 2px 12px #0002;border-radius:10px;">
+        {% for message in messages %}
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 28px 18px 24px;font-size:1.2em;font-weight:500;
+            {% if message.tags == 'success' %}background:#eafaf1;color:#219150;border:2px solid #2ecc71;{% else %}background:#ffb6c1;color:#a1002b;border:2px solid #ff5e8a;{% endif %}">
+            <span>{{ message }}</span>
+            <span onclick="this.parentElement.parentElement.style.display='none'" style="cursor:pointer;font-size:1.5em;line-height:1;">&times;</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-leaf"></i>
+                <span>EcoVoyage</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="{% url 'home' %}"><i class="fas fa-home"></i> Accueil</a></li>
+                <li><a href="{% url 'destinations' %}"><i class="fas fa-map-marker-alt"></i> Destinations</a></li>
+                <li><a href="{% url 'hebergements' %}"><i class="fas fa-bed"></i> Hébergements</a></li>
+                <li><a href="{% url 'blog' %}"><i class="fas fa-blog"></i> Blog</a></li>
+                <li><a href="{% url 'about' %}" class="active"><i class="fas fa-info-circle"></i> À propos</a></li>
+                <!-- Contact supprimé -->
+            </ul>
+            <div class="nav-buttons">
+                {% if utilisateur %}
+                    <span class="nav-username">Bonjour, {{ utilisateur.nom }} !</span>
+                    <a href="{% url 'deconnexion' %}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+                {% else %}
+                    <a href="/connexion/" class="btn-login"><i class="fas fa-sign-in-alt"></i> Connexion</a>
+                    <a href="/inscription/" class="btn-signup"><i class="fas fa-user-plus"></i> Inscription</a>
+                {% endif %}
+            </div>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="about-header">
+        <div class="container">
+            <h1>À propos d'EcoVoyage</h1>
+            <p>Votre partenaire pour des voyages responsables et durables</p>
+        </div>
+    </header>
+
+    <!-- Mission Section -->
+    <section class="mission-section">
+        <div class="container">
+            <div class="mission-content">
+                <div class="mission-text">
+                    <h2>Notre Mission</h2>
+                    <p>Chez EcoVoyage, nous croyons que le voyage peut être à la fois enrichissant et respectueux de l'environnement. Notre mission est de faciliter l'accès à des expériences de voyage durables en proposant des destinations, hébergements et activités qui respectent notre planète.</p>
+                    <p>Nous nous engageons à promouvoir un tourisme responsable qui préserve les écosystèmes locaux, soutient les communautés et réduit l'impact environnemental de nos voyages.</p>
+                </div>
+                <div class="mission-image">
+                    <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500&h=400&fit=crop" alt="Mission EcoVoyage">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Values Section -->
+    <section class="values-section">
+        <div class="container">
+            <h2>Nos Valeurs</h2>
+            <div class="values-grid">
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3>Durabilité</h3>
+                    <p>Nous privilégions les pratiques durables et les partenaires engagés dans la protection de l'environnement.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-hands-helping"></i>
+                    </div>
+                    <h3>Responsabilité</h3>
+                    <p>Nous nous engageons à minimiser l'impact de nos voyages sur les écosystèmes locaux.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Communauté</h3>
+                    <p>Nous soutenons les communautés locales et leurs initiatives de développement durable.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3>Innovation</h3>
+                    <p>Nous explorons constamment de nouvelles façons de voyager de manière plus responsable.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="team-section">
+        <div class="container">
+            <h2>Notre Équipe</h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-photo">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop" alt="Thomas Martin">
+                    </div>
+                    <h3>Thomas Martin</h3>
+                    <p class="member-role">Fondateur & CEO</p>
+                    <p class="member-bio">Passionné de voyage et d'écologie, Thomas a créé EcoVoyage pour démocratiser le tourisme responsable.</p>
+                </div>
+                <div class="team-member">
+                    <div class="member-photo">
+                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=300&h=300&fit=crop" alt="Sophie Dubois">
+                    </div>
+                    <h3>Sophie Dubois</h3>
+                    <p class="member-role">Directrice Marketing</p>
+                    <p class="member-bio">Experte en communication durable, Sophie développe nos stratégies de sensibilisation au voyage responsable.</p>
+                </div>
+                <div class="team-member">
+                    <div class="member-photo">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop" alt="Marc Leroy">
+                    </div>
+                    <h3>Marc Leroy</h3>
+                    <p class="member-role">Responsable Partenariats</p>
+                    <p class="member-bio">Marc sélectionne et développe nos partenariats avec des hébergements et activités éco-responsables.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Destinations</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">200+</div>
+                    <div class="stat-label">Hébergements Verts</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10k+</div>
+                    <div class="stat-label">Voyageurs Satisfaits</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">50%</div>
+                    <div class="stat-label">Réduction CO2</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <h2>Contactez-nous</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>Email</h4>
+                            <p>contact@ecovoyage.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h4>Téléphone</h4>
+                            <p>+33 1 23 45 67 89</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Adresse</h4>
+                            <p>123 Rue de la Paix<br>75001 Paris, France</p>
+                        </div>
+                    </div>
+                </div>
+                <form class="contact-form">
+                    <div class="form-group">
+                        <input type="text" placeholder="Votre nom" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" placeholder="Votre email" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea placeholder="Votre message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-paper-plane"></i> Envoyer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>EcoVoyage</h3>
+                    <p>Votre partenaire pour des voyages responsables et durables.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Liens Rapides</h4>
+                    <ul>
+                        <li><a href="{% url 'home' %}">Accueil</a></li>
+                        <li><a href="{% url 'destinations' %}">Destinations</a></li>
+                        <li><a href="{% url 'hebergements' %}">Hébergements</a></li>
+                        <li><a href="{% url 'blog' %}">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p><i class="fas fa-envelope"></i> contact@ecovoyage.com</p>
+                    <p><i class="fas fa-phone"></i> +33 1 23 45 67 89</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 EcoVoyage. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/about.js' %}"></script>
+    <script src="{% static 'js/home.js' %}"></script>
+</body>
+</html> 

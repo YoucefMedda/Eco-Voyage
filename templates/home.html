@@ -1,0 +1,190 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoVoyage - Accueil</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    {% if messages %}
+      <div id="alertBox" style="position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:9999;min-width:320px;max-width:90vw;box-shadow:0 2px 12px #0002;border-radius:10px;">
+        {% for message in messages %}
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 28px 18px 24px;font-size:1.2em;font-weight:500;
+            {% if message.tags == 'success' %}background:#eafaf1;color:#219150;border:2px solid #2ecc71;{% else %}background:#ffb6c1;color:#a1002b;border:2px solid #ff5e8a;{% endif %}">
+            <span>{{ message }}</span>
+            <span onclick="this.parentElement.parentElement.style.display='none'" style="cursor:pointer;font-size:1.5em;line-height:1;">&times;</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-leaf"></i>
+                <span>EcoVoyage</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="{% url 'home' %}" class="active"><i class="fas fa-home"></i> Accueil</a></li>
+                <li><a href="{% url 'destinations' %}"><i class="fas fa-map-marker-alt"></i> Destinations</a></li>
+                <li><a href="{% url 'hebergements' %}"><i class="fas fa-bed"></i> Hébergements</a></li>
+                <li><a href="{% url 'blog' %}"><i class="fas fa-blog"></i> Blog</a></li>
+                <li><a href="{% url 'about' %}"><i class="fas fa-info-circle"></i> À propos</a></li>
+                <!-- Contact supprimé -->
+            </ul>
+            <div class="nav-buttons">
+                {% if utilisateur %}
+                    <span class="nav-username">Bonjour, {{ utilisateur.nom }} !</span>
+                    <a href="{% url 'deconnexion' %}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+                {% else %}
+                    <a href="/connexion/" class="btn-login"><i class="fas fa-sign-in-alt"></i> Connexion</a>
+                    <a href="/inscription/" class="btn-signup"><i class="fas fa-user-plus"></i> Inscription</a>
+                {% endif %}
+            </div>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+    <!-- Fin navigation -->
+    <header>
+        <div class="banner">
+            <div class="banner-overlay"></div>
+            <div class="container">
+                <span class="banner-emoji"><i class="fa-solid fa-leaf"></i></span>
+                <h1>Voyagez responsable,<br>préservez la planète</h1>
+                <p>Des séjours éco-responsables vérifiés, des hébergements verts et des aventures durables vous attendent.</p>
+                <div class="banner-btns">
+                    <a href="{% url 'destinations' %}" class="cta cta-main"><i class="fa-solid fa-magnifying-glass"></i> Explorer nos destinations</a>
+                    <a href="#carbone" class="cta cta-outline"><i class="fa-regular fa-compass"></i> Calculer mon empreinte carbone</a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <section id="destinations" class="destinations">
+                <h2><i class="fa-solid fa-city"></i> Villes éco-responsables</h2>
+                <div class="cards">
+                    <div class="card">
+                        <div class="card-badge"><i class="fa-solid fa-leaf"></i></div>
+                        <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=400&q=80" alt="Paris">
+                        <h3>Paris</h3>
+                        <p>Paris s'engage pour la mobilité douce, les espaces verts et l'écotourisme urbain.</p>
+                        <a href="{% url 'destinations' %}" class="card-btn">Découvrir</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-badge"><i class="fa-solid fa-bicycle"></i></div>
+                        <img src="https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=400&q=80" alt="Amsterdam">
+                        <h3>Amsterdam</h3>
+                        <p>Amsterdam, capitale du vélo, propose un tourisme responsable et des hébergements Green Key.</p>
+                        <a href="{% url 'destinations' %}" class="card-btn">Découvrir</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-badge"><i class="fa-solid fa-tree"></i></div>
+                        <img src="https://images.unsplash.com/photo-1509395176047-4a66953fd231?auto=format&fit=crop&w=400&q=80" alt="Copenhague">
+                        <h3>Copenhague</h3>
+                        <p>Copenhague est reconnue pour sa qualité de vie, ses infrastructures vertes et ses hôtels éco-certifiés.</p>
+                        <a href="{% url 'destinations' %}" class="card-btn">Découvrir</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="container">
+          <section id="valeurs" class="valeurs">
+            <h2>Valeurs & Engagements</h2>
+            <div class="valeurs-list">
+              <div class="valeur">
+                <i class="fa-solid fa-leaf"></i>
+                <h3>Respect de la nature</h3>
+                <p>Nous privilégions des séjours qui protègent l'environnement et la biodiversité.</p>
+              </div>
+              <div class="valeur">
+                <i class="fa-solid fa-users"></i>
+                <h3>Soutien local</h3>
+                <p>Nous collaborons avec des acteurs locaux pour un tourisme équitable et solidaire.</p>
+              </div>
+              <div class="valeur">
+                <i class="fa-solid fa-train"></i>
+                <h3>Mobilité douce</h3>
+                <p>Nous encourageons les transports à faible impact carbone pour voyager autrement.</p>
+              </div>
+              <div class="valeur">
+                <i class="fa-solid fa-seedling"></i>
+                <h3>Éducation</h3>
+                <p>Nous sensibilisons à l'écotourisme et à la préservation de la planète.</p>
+              </div>
+            </div>
+          </section>
+        </div>
+        <section class="pourquoi-eco">
+          <div class="pourquoi-container">
+            <h2>
+              <span class="pourquoi-badge">
+                <i class="fas fa-leaf"></i>
+              </span>
+              Pourquoi voyager éco-responsable ?
+            </h2>
+            <ul class="pourquoi-list">
+              <li><i class="fas fa-cloud"></i> Réduire son empreinte carbone</li>
+              <li><i class="fas fa-seedling"></i> Préserver la biodiversité</li>
+              <li><i class="fas fa-users"></i> Soutenir les communautés locales</li>
+              <li><i class="fas fa-globe-europe"></i> Découvrir autrement</li>
+            </ul>
+          </div>
+        </section>
+        <!-- Section Témoignages -->
+        <section class="temoignages-section">
+          <h2><i class="fas fa-comment-dots"></i> Témoignages</h2>
+          <div class="temoignages-carousel">
+            <button class="temoignage-arrow left"><i class="fas fa-chevron-left"></i></button>
+            <div class="temoignages-cards">
+              <div class="temoignage-card active">
+                <p class="temoignage-texte">"Un voyage inoubliable, respectueux de la nature et des habitants. Je recommande !"</p>
+                <div class="temoignage-auteur">
+                  <img src="{% static 'images/user1.jpg' %}" alt="Marie" />
+                  <span data-ville="Paris">Marie</span>
+                </div>
+              </div>
+              <div class="temoignage-card">
+                <p class="temoignage-texte">"Des hébergements éco-responsables et des activités authentiques. Merci !"</p>
+                <div class="temoignage-auteur">
+                  <img src="{% static 'images/user2.jpg' %}" alt="Lucas" />
+                  <span data-ville="Lyon">Lucas</span>
+                </div>
+              </div>
+              <div class="temoignage-card">
+                <p class="temoignage-texte">"J'ai découvert des paysages incroyables tout en limitant mon impact environnemental."</p>
+                <div class="temoignage-auteur">
+                  <img src="{% static 'images/user3.jpg' %}" alt="Sophie" />
+                  <span data-ville="Nantes">Sophie</span>
+                </div>
+              </div>
+            </div>
+            <button class="temoignage-arrow right"><i class="fas fa-chevron-right"></i></button>
+          </div>
+          <div class="temoignages-pagination">
+            <span class="temoignage-dot active"></span>
+            <span class="temoignage-dot"></span>
+            <span class="temoignage-dot"></span>
+          </div>
+        </section>
+    </main>
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 EcoVoyage. Tous droits réservés.</p>
+            <div class="socials">
+                <a href="#"><span>Instagram</span></a>
+                <a href="#"><span>Facebook</span></a>
+                <a href="#"><span>Twitter</span></a>
+            </div>
+        </div>
+    </footer>
+    <script src="/static/js/home.js"></script>
+</body>
+</html> 

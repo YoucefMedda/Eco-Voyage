@@ -1,0 +1,109 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ blog.titre }} - Blog - EcoVoyage</title>
+    <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/detail_blog.css' %}">
+    <style>
+        .star-rating input[type="radio"] { display: none; }
+        .star-rating label { font-size: 2em; color: #ccc; cursor: pointer; transition: color 0.2s; }
+        .star-rating input[type="radio"]:checked ~ label, .star-rating label:hover, .star-rating label:hover ~ label { color: #f5b301; }
+        .comment-card { background: #fff; border-radius: 10px; box-shadow: 0 2px 10px #0001; padding: 18px 22px; margin-bottom: 18px; }
+        .comment-meta { color: #888; font-size: 0.98em; margin-bottom: 6px; }
+        .comment-content { font-size: 1.08em; color: #222; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-leaf"></i>
+                <span>EcoVoyage</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="{% url 'home' %}"><i class="fas fa-home"></i> Accueil</a></li>
+                <li><a href="{% url 'destinations' %}"><i class="fas fa-map-marker-alt"></i> Destinations</a></li>
+                <li><a href="{% url 'hebergements' %}"><i class="fas fa-bed"></i> Hébergements</a></li>
+                <li><a href="{% url 'blog' %}" class="active"><i class="fas fa-blog"></i> Blog</a></li>
+                <li><a href="{% url 'about' %}"><i class="fas fa-info-circle"></i> À propos</a></li>
+            </ul>
+            <div class="nav-buttons">
+                {% if utilisateur %}
+                    <span class="nav-username">Bonjour, {{ utilisateur.nom }} !</span>
+                    <a href="{% url 'deconnexion' %}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+                {% else %}
+                    <a href="/connexion/" class="btn-login"><i class="fas fa-sign-in-alt"></i> Connexion</a>
+                    <a href="/inscription/" class="btn-signup"><i class="fas fa-user-plus"></i> Inscription</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    <main>
+        <div class="blog-detail-container">
+            <a href="{% url 'blog' %}" class="btn-signup" style="margin-bottom:18px;display:inline-block;"><i class="fas fa-arrow-left"></i> Retour au blog</a>
+            <div class="blog-detail-header">
+                {% if blog.photo %}
+                    <img src="{{ blog.photo.url }}" alt="{{ blog.titre }}" class="blog-detail-photo">
+                {% endif %}
+                <div style="flex:1;">
+                    <div class="blog-detail-meta">
+                        {% if blog.type == 'conseils' %}<i class="fas fa-lightbulb"></i> Conseils{% endif %}
+                        {% if blog.type == 'destinations' %}<i class="fas fa-map-marker-alt"></i> Destinations{% endif %}
+                        {% if blog.type == 'ecologie' %}<i class="fas fa-leaf"></i> Écologie{% endif %}
+                        {% if blog.type == 'actualites' %}<i class="fas fa-newspaper"></i> Actualités{% endif %}
+                    </div>
+                    <h1 class="blog-detail-title">{{ blog.titre }}</h1>
+                    <div class="blog-detail-desc">{{ blog.description }}</div>
+                    <div class="blog-detail-date">
+                        Publié le {{ blog.date_edition|date:"d/m/Y H:i" }}
+                        {% if blog.utilisateur %}par <b>{{ blog.utilisateur.nom }}</b>{% endif %}
+                    </div>
+                </div>
+            </div>
+            <h3 style="margin-top:32px;color:#219150;font-size:1.15em;"><i class="fas fa-pen"></i> Laisser un commentaire</h3>
+            <form method="post" class="comment-form">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                <div style="margin-bottom:12px;">
+                    {{ form.contenu.label_tag }}<br>
+                    {{ form.contenu }}
+                </div>
+                <div class="star-rating" style="margin-bottom:18px;">
+                    {% for radio in form.evaluation|slice:"::-1" %}
+                        {{ radio.tag }}<label for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                    {% endfor %}
+                </div>
+                <button type="submit" class="btn-login"><i class="fas fa-paper-plane"></i> Publier le commentaire</button>
+            </form>
+            <h2 class="comment-section-title"><i class="fas fa-comments"></i> Commentaires</h2>
+            {% if commentaires %}
+                {% for c in commentaires %}
+                    <div class="comment-card">
+                        <div class="comment-meta">
+                            <b>{{ c.utilisateur.nom }}</b> — {{ c.date_ajout|date:"d/m/Y H:i" }} —
+                            <span>
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= c.evaluation %}
+                                        <span style="color:#f5b301;">★</span>
+                                    {% else %}
+                                        <span style="color:#ccc;">★</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </span>
+                        </div>
+                        <div class="comment-content">{{ c.contenu }}</div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div style="color:#888;font-size:1.1em;margin-bottom:18px;">Aucun commentaire pour l’instant.</div>
+            {% endif %}
+        </div>
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+    <script src="{% static 'js/detail_blog.js' %}"></script>
+</body>
+</html> 

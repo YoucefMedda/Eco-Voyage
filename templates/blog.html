@@ -1,0 +1,188 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog & Ressources - EcoVoyage</title>
+    <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    {% if messages %}
+      <div id="alertBox" style="position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:9999;min-width:320px;max-width:90vw;box-shadow:0 2px 12px #0002;border-radius:10px;">
+        {% for message in messages %}
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 28px 18px 24px;font-size:1.2em;font-weight:500;
+            {% if message.tags == 'success' %}background:#eafaf1;color:#219150;border:2px solid #2ecc71;{% else %}background:#ffb6c1;color:#a1002b;border:2px solid #ff5e8a;{% endif %}">
+            <span>{{ message }}</span>
+            <span onclick="this.parentElement.parentElement.style.display='none'" style="cursor:pointer;font-size:1.5em;line-height:1;">&times;</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-leaf"></i>
+                <span>EcoVoyage</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="{% url 'home' %}"><i class="fas fa-home"></i> Accueil</a></li>
+                <li><a href="{% url 'destinations' %}"><i class="fas fa-map-marker-alt"></i> Destinations</a></li>
+                <li><a href="{% url 'hebergements' %}"><i class="fas fa-bed"></i> Hébergements</a></li>
+                <li><a href="{% url 'blog' %}" class="active"><i class="fas fa-blog"></i> Blog</a></li>
+                <li><a href="{% url 'about' %}"><i class="fas fa-info-circle"></i> À propos</a></li>
+                <!-- Contact supprimé -->
+            </ul>
+            <div class="nav-buttons">
+                {% if utilisateur %}
+                    <span class="nav-username">Bonjour, {{ utilisateur.nom }} !</span>
+                    <a href="{% url 'deconnexion' %}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+                {% else %}
+                    <a href="/connexion/" class="btn-login"><i class="fas fa-sign-in-alt"></i> Connexion</a>
+                    <a href="/inscription/" class="btn-signup"><i class="fas fa-user-plus"></i> Inscription</a>
+                {% endif %}
+            </div>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="blog-header">
+        <div class="container">
+            <h1>Blog & Ressources</h1>
+            <p>Découvrez nos conseils, guides et actualités sur le voyage éco-responsable</p>
+        </div>
+    </header>
+
+    <!-- Filters -->
+    <section class="filters-section">
+        <div class="container">
+            <div class="filters">
+                <button class="filter-btn active" data-category="all">
+                    <i class="fas fa-th"></i> Tous
+                </button>
+                <button class="filter-btn" data-category="conseils">
+                    <i class="fas fa-lightbulb"></i> Conseils
+                </button>
+                <button class="filter-btn" data-category="destinations">
+                    <i class="fas fa-map-marker-alt"></i> Destinations
+                </button>
+                <button class="filter-btn" data-category="ecologie">
+                    <i class="fas fa-leaf"></i> Écologie
+                </button>
+                <button class="filter-btn" data-category="actualites">
+                    <i class="fas fa-newspaper"></i> Actualités
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <main>
+        <div class="container">
+            <h1 style="margin-bottom:24px;color:#2ecc71;"><i class="fas fa-blog"></i> Blog & Ressources</h1>
+            {% if utilisateur %}
+                <a href="{% url 'create_blog' %}" class="btn-login" style="margin-bottom:24px;display:inline-block;"><i class="fas fa-pen"></i> Écrire un article</a>
+            {% endif %}
+            {% if blogs %}
+                <div class="blog-list">
+                    {% for blog in blogs %}
+                        <a href="{% url 'detail_blog' blog.id %}" style="text-decoration:none;color:inherit;">
+                        <div class="blog-card" data-category="{{ blog.type }}" style="background:#fff;border-radius:12px;box-shadow:0 2px 12px #0001;padding:24px;margin-bottom:24px;display:flex;gap:24px;align-items:flex-start;transition:box-shadow 0.2s,transform 0.2s;cursor:pointer;">
+                            {% if blog.photo %}
+                                <img src="{{ blog.photo.url }}" alt="{{ blog.titre }}" style="width:140px;height:100px;object-fit:cover;border-radius:8px;">
+                            {% endif %}
+                            <div style="flex:1;">
+                                <div style="font-size:1.1em;font-weight:600;color:#219150;margin-bottom:4px;">
+                                    {% if blog.type == 'conseils' %}<i class="fas fa-lightbulb"></i> Conseils{% endif %}
+                                    {% if blog.type == 'destinations' %}<i class="fas fa-map-marker-alt"></i> Destinations{% endif %}
+                                    {% if blog.type == 'ecologie' %}<i class="fas fa-leaf"></i> Écologie{% endif %}
+                                    {% if blog.type == 'actualites' %}<i class="fas fa-newspaper"></i> Actualités{% endif %}
+                                </div>
+                                <h2 style="margin:0 0 8px 0;font-size:1.4em;">{{ blog.titre }}</h2>
+                                <div style="color:#444;font-size:1.05em;margin-bottom:8px;">{{ blog.description }}</div>
+                                <div style="font-size:0.95em;color:#888;">
+                                    Publié le {{ blog.date_edition|date:"d/m/Y H:i" }}
+                                    {% if blog.utilisateur %}par <b>{{ blog.utilisateur.nom }}</b>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+                    {% endfor %}
+                </div>
+                {% if blogs.has_other_pages %}
+                <div class="pagination" style="display:flex;justify-content:center;gap:8px;margin:32px 0 0 0;">
+                    {% if blogs.has_previous %}
+                        <a href="?page={{ blogs.previous_page_number }}" class="btn-signup">&laquo; Précédent</a>
+                    {% endif %}
+                    {% for num in blogs.paginator.page_range %}
+                        {% if blogs.number == num %}
+                            <span class="btn-login" style="pointer-events:none;">{{ num }}</span>
+                        {% else %}
+                            <a href="?page={{ num }}" class="btn-signup">{{ num }}</a>
+                        {% endif %}
+                    {% endfor %}
+                    {% if blogs.has_next %}
+                        <a href="?page={{ blogs.next_page_number }}" class="btn-signup">Suivant &raquo;</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            {% else %}
+                <div style="text-align:center;color:#888;font-size:1.2em;margin:40px 0;">Aucun article de blog pour le moment.</div>
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- Newsletter -->
+    <section class="newsletter-section">
+        <div class="container">
+            <div class="newsletter-content">
+                <h2>Restez Informé</h2>
+                <p>Recevez nos derniers articles et conseils sur le voyage éco-responsable</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Votre adresse email" required>
+                    <button type="submit"><i class="fas fa-paper-plane"></i> S'abonner</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>EcoVoyage</h3>
+                    <p>Votre partenaire pour des voyages responsables et durables.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Liens Rapides</h4>
+                    <ul>
+                        <li><a href="{% url 'home' %}">Accueil</a></li>
+                        <li><a href="{% url 'destinations' %}">Destinations</a></li>
+                        <li><a href="{% url 'hebergements' %}">Hébergements</a></li>
+                        <li><a href="{% url 'blog' %}">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p><i class="fas fa-envelope"></i> contact@ecovoyage.com</p>
+                    <p><i class="fas fa-phone"></i> +33 1 23 45 67 89</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 EcoVoyage. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/blog.js' %}"></script>
+    <script src="{% static 'js/home.js' %}"></script>
+</body>
+</html> 

@@ -1,0 +1,93 @@
+body {
+    background: #f7fafb;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+.container {
+    max-width: 600px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 16px #0001;
+    padding: 36px 32px 28px 32px;
+}
+h1 {
+    color: #219150;
+    margin-bottom: 24px;
+    font-size: 2em;
+    text-align: center;
+}
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+form label {
+    font-weight: 500;
+    color: #219150;
+    margin-bottom: 6px;
+}
+form input[type="text"],
+form textarea,
+form select {
+    border: 1.5px solid #e0e0e0;
+    border-radius: 7px;
+    padding: 10px 12px;
+    font-size: 1.08em;
+    background: #f9f9f9;
+    transition: border 0.2s;
+}
+form input[type="text"]:focus,
+form textarea:focus,
+form select:focus {
+    border: 1.5px solid #2ecc71;
+    outline: none;
+}
+form textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+form input[type="file"] {
+    margin-top: 4px;
+}
+button[type="submit"] {
+    background: #2ecc71;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    padding: 12px 0;
+    font-size: 1.13em;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.2s;
+}
+button[type="submit"]:hover {
+    background: #219150;
+}
+.btn-signup {
+    background: #fff;
+    color: #219150;
+    border: 2px solid #2ecc71;
+    border-radius: 7px;
+    padding: 10px 22px;
+    font-size: 1em;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 18px;
+    transition: background 0.2s, color 0.2s;
+}
+.btn-signup:hover {
+    background: #2ecc71;
+    color: #fff;
+}
+@media (max-width: 700px) {
+    .container {
+        padding: 18px 6vw;
+    }
+    h1 {
+        font-size: 1.3em;
+    }
+} 

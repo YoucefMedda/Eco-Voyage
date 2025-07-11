@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Connexion - ÉcoVoyage</title>
+  <link rel="stylesheet" href="{% static 'css/connexion.css' %}" />
+</head>
+<body>
+
+  <!-- ✅ Vidéo de fond animée -->
+  <video autoplay muted playsinline id="bgVideo">
+    Votre navigateur ne supporte pas la vidéo.
+  </video>
+
+  <!-- ✅ Voile flouté vert -->
+  <div class="overlay"></div>
+
+  <!-- ✅ Carte de connexion -->
+  <div class="container">
+    <div class="login-card">
+      <a href="/" style="text-decoration:none;display:inline-block;margin-bottom:10px;">
+        <span style="font-size:2.2em;color:#2e7d32;vertical-align:middle;">
+          <i class="fas fa-leaf" style="margin-right:8px;"></i>
+        </span>
+        <span style="font-size:2em;color:#2e7d32;font-weight:bold;vertical-align:middle;">ÉcoVoyage</span>
+      </a>
+      <p class="subtitle">Reconnectez-vous à la nature</p>
+      {% if messages %}
+        <ul class="messages">
+          {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      <form action="#" method="POST" class="login-form">
+        {% csrf_token %}
+        <label for="username">Nom</label>
+        <input type="text" id="username" name="username" required placeholder="Votre nom" />
+
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" name="password" required placeholder="••••••••" />
+
+        <button type="submit">Se connecter</button>
+        <p class="register-link">Pas encore de compte ? <a href="/inscription/" class="btn-signup" style="color:#2ecc71;font-weight:600;">Inscription</a></p>
+      </form>
+    </div>
+  </div>
+  <script src="{% static 'js/connexion.js' %}"></script>
+</body>
+</html>

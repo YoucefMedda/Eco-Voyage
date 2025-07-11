@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créer un article de blog - EcoVoyage</title>
+    <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/create_blog.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-leaf"></i>
+                <span>EcoVoyage</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="{% url 'home' %}"><i class="fas fa-home"></i> Accueil</a></li>
+                <li><a href="{% url 'destinations' %}"><i class="fas fa-map-marker-alt"></i> Destinations</a></li>
+                <li><a href="{% url 'hebergements' %}"><i class="fas fa-bed"></i> Hébergements</a></li>
+                <li><a href="{% url 'blog' %}" class="active"><i class="fas fa-blog"></i> Blog</a></li>
+                <li><a href="{% url 'about' %}"><i class="fas fa-info-circle"></i> À propos</a></li>
+            </ul>
+            <div class="nav-buttons">
+                {% if utilisateur %}
+                    <span class="nav-username">Bonjour, {{ utilisateur.nom }} !</span>
+                    <a href="{% url 'deconnexion' %}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+                {% else %}
+                    <a href="/connexion/" class="btn-login"><i class="fas fa-sign-in-alt"></i> Connexion</a>
+                    <a href="/inscription/" class="btn-signup"><i class="fas fa-user-plus"></i> Inscription</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    <main>
+        <div class="container" style="max-width:600px;margin:40px auto;">
+            <h1 style="color:#219150;margin-bottom:24px;"><i class="fas fa-pen"></i> Créer un article de blog</h1>
+            <form method="post" enctype="multipart/form-data" style="background:#fff;padding:32px 28px;border-radius:12px;box-shadow:0 2px 12px #0001;">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn-login" style="margin-top:18px;width:100%;font-size:1.1em;">Publier l'article</button>
+            </form>
+            <a href="{% url 'blog' %}" class="btn-signup" style="display:inline-block;margin-top:24px;"><i class="fas fa-arrow-left"></i> Retour au blog</a>
+        </div>
+    </main>
+    <script src="{% static 'js/create_blog.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+</body>
+</html> 

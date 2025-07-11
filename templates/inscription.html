@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription</title>
+    <link rel="stylesheet" href="{% static 'css/connexion.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <!-- Vidéo de fond et overlay -->
+    <video id="bgVideo" autoplay muted loop></video>
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="login-card">
+            <div class="site-logo" style="margin-bottom: 10px;">
+                <a href="{% url 'home' %}" style="text-decoration:none;display:inline-flex;align-items:center;">
+                    <i class="fas fa-leaf" style="color:#2e7d32; font-size:2em;"></i>
+                    <span style="font-size:1.5em; font-weight:bold; color:#2e7d32; margin-left:8px;">EcoVoyage</span>
+                </a>
+            </div>
+            <h1>Créer un compte</h1>
+            <p class="subtitle">Rejoignez la communauté EcoVoyage !</p>
+            {% if messages %}
+              <ul class="messages">
+                {% for message in messages %}
+                  <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+            <form method="post" class="login-form">
+                {% csrf_token %}
+                <label for="id_username">Nom d'utilisateur</label>
+                <input type="text" id="id_username" name="username" required>
+                <label for="id_password1">Mot de passe</label>
+                <input type="password" id="id_password1" name="password1" required>
+                <label for="id_password2">Confirmer le mot de passe</label>
+                <input type="password" id="id_password2" name="password2" required>
+                <button type="submit">S'inscrire</button>
+            </form>
+            <div class="register-link">
+                Déjà un compte ? <a href="/connexion/">Se connecter</a>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'js/connexion.js' %}"></script>
+</body>
+</html> 

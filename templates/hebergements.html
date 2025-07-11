@@ -1,0 +1,165 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Hébergements éco-responsables</title>
+  <link rel="stylesheet" href="{% static 'css/hebergements.css' %}">
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+  {% if messages %}
+    <div id="alertBox" style="position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:9999;min-width:320px;max-width:90vw;box-shadow:0 2px 12px #0002;border-radius:10px;">
+      {% for message in messages %}
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 28px 18px 24px;font-size:1.2em;font-weight:500;
+          {% if message.tags == 'success' %}background:#eafaf1;color:#219150;border:2px solid #2ecc71;{% else %}background:#ffb6c1;color:#a1002b;border:2px solid #ff5e8a;{% endif %}">
+          <span>{{ message }}</span>
+          <span onclick="this.parentElement.parentElement.style.display='none'" style="cursor:pointer;font-size:1.5em;line-height:1;">&times;</span>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <i class="fas fa-leaf"></i>
+        <span>EcoVoyage</span>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="{% url 'home' %}"><i class="fas fa-home"></i> Accueil</a></li>
+        <li><a href="{% url 'destinations' %}"><i class="fas fa-map-marker-alt"></i> Destinations</a></li>
+        <li><a href="{% url 'hebergements' %}" class="active"><i class="fas fa-bed"></i> Hébergements</a></li>
+        <li><a href="{% url 'blog' %}"><i class="fas fa-blog"></i> Blog</a></li>
+        <li><a href="{% url 'about' %}"><i class="fas fa-info-circle"></i> À propos</a></li>
+      </ul>
+      <div class="nav-buttons">
+        {% if utilisateur %}
+            <span class="nav-username">Bonjour, {{ utilisateur.nom }} !</span>
+            <a href="{% url 'deconnexion' %}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+        {% else %}
+            <a href="/connexion/" class="btn-login"><i class="fas fa-sign-in-alt"></i> Connexion</a>
+            <a href="/inscription/" class="btn-signup"><i class="fas fa-user-plus"></i> Inscription</a>
+        {% endif %}
+      </div>
+      <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </nav>
+
+  <header class="heberg-header">
+    <h1><i class="fas fa-hotel"></i> Hébergements éco-responsables</h1>
+    <p>Trouvez un hébergement engagé pour un séjour durable et confortable.</p>
+  </header>
+  <main>
+    <section class="heberg-filters">
+      <form id="hebergFiltersForm" method="get" action="">
+        <select id="hebergEcoLabel" name="eco_label" onchange="this.form.submit()">
+          <option value="">Éco-label (tous)</option>
+          {% for label in eco_labels %}
+          <option value="{{ label }}" {% if eco_label_selected == label %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+        <select id="hebergType" name="type" onchange="this.form.submit()">
+          <option value="">Type (tous)</option>
+          <option value="hotel" {% if type_selected == 'hotel' %}selected{% endif %}>Hôtel</option>
+          <option value="auberge" {% if type_selected == 'auberge' %}selected{% endif %}>Auberge</option>
+          <option value="bnb" {% if type_selected == 'bnb' %}selected{% endif %}>B&B</option>
+        </select>
+        <select id="hebergDestination" name="destination" onchange="this.form.submit()">
+          <option value="">Ville (toutes)</option>
+          {% for ville in destinations %}
+          <option value="{{ ville }}" {% if destination_selected == ville %}selected{% endif %}>{{ ville }}</option>
+          {% endfor %}
+        </select>
+      </form>
+    </section>
+    <section class="heberg-grid">
+      {% if hebergements %}
+        {% for h in hebergements %}
+        <div class="heberg-card">
+          <div class="heberg-img" style="background-image: url('{% if h.photo %}{{ h.photo.url }}{% else %}https://source.unsplash.com/400x250/?{{ h.destination.nom|urlencode }},hotel{% endif %}');">
+            {% if h.eco_label %}
+            <span class="heberg-badge"><i class="fas fa-leaf"></i> {{ h.eco_label }}</span>
+            {% endif %}
+          </div>
+          <h2>{{ h.nom }}</h2>
+          <p>{{ h.description }}</p>
+          <div class="heberg-info">
+            <span><i class="fas fa-map-marker-alt"></i> {{ h.destination.nom }} ({{ h.destination.pays.nom }})</span><br>
+            <span><i class="fas fa-euro-sign"></i> {{ h.prix_par_nuit }} € / nuit</span>
+          </div>
+          <a href="{% url 'reservation' h.id %}" class="heberg-reserver-btn">Réserver</a>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div style="text-align:center;font-size:1.2em;color:#388e3c;margin:32px 0;">
+          Aucun hébergement trouvé pour cette destination.
+        </div>
+      {% endif %}
+    </section>
+    <section class="fiche-hebergement">
+      <!-- Galerie photo -->
+      <div class="fiche-galerie">
+        <div class="fiche-galerie-slideshow" id="galerieSlideshow">
+          <figure class="fiche-galerie-slide active">
+            <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80" alt="Chambre éco">
+            <figcaption>100% énergie renouvelable</figcaption>
+          </figure>
+          <figure class="fiche-galerie-slide">
+            <img src="https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=800&q=80" alt="Salle commune">
+            <figcaption>Produits locaux & bio</figcaption>
+          </figure>
+          <figure class="fiche-galerie-slide">
+            <img src="https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=800&q=80" alt="Extérieur">
+            <figcaption>Tri des déchets & mobilité douce</figcaption>
+          </figure>
+          <button class="fiche-galerie-arrow left" id="galeriePrev">&#10094;</button>
+          <button class="fiche-galerie-arrow right" id="galerieNext">&#10095;</button>
+        </div>
+        <div class="fiche-heberg-title">
+          <h2>Hôtel Le Green Paris</h2>
+        </div>
+      </div>
+      <!-- Politique environnementale et avis -->
+      <div class="fiche-heberg-cols">
+        <div class="fiche-heberg-col">
+          <h3><i class="fas fa-leaf"></i> Politique environnementale</h3>
+          <ul class="fiche-heberg-list">
+            <li>Électricité 100% renouvelable</li>
+            <li>Produits d'entretien écologiques</li>
+            <li>Gestion responsable de l'eau et des déchets</li>
+            <li>Partenariats avec des producteurs locaux</li>
+            <li>Incitation à la mobilité douce (vélos, transports en commun)</li>
+          </ul>
+        </div>
+        <div class="fiche-heberg-col avis">
+          <h3><i class="fas fa-star"></i> Avis (écologie en priorité)</h3>
+          <ul class="fiche-heberg-avis-list">
+            <li>
+              <b>⭐⭐⭐⭐⭐</b> <span class="avis-theme">Écologie</span> <br>
+              "Un hôtel vraiment engagé, tout est pensé pour l'environnement !" <i>- Marie</i>
+            </li>
+            <li>
+              <b>⭐⭐⭐⭐</b> <span class="avis-theme">Écologie</span> <br>
+              "J'ai adoré le tri des déchets et la possibilité de louer un vélo." <i>- Lucas</i>
+            </li>
+            <li>
+              <b>⭐⭐⭐⭐</b> <span class="avis-theme">Confort</span> <br>
+              "Chambre très agréable, literie confortable, petit-déjeuner bio." <i>- Sophie</i>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <!-- Modale de réservation -->
+    <!-- SUPPRIMÉ : ancienne modale JS de réservation -->
+  </main>
+  <script src="{% static 'js/hebergements.js' %}"></script>
+  <script src="{% static 'js/home.js' %}"></script>
+</body>
+</html> 
