@@ -27,7 +27,7 @@ py manage.py runserver
 http://127.0.0.1:8000/
 ```
 
-⚠️ Résolution des problèmes avec PowerShell
+## ⚠️ Résolution des problèmes avec PowerShell
 Si vous rencontrez des problèmes lors de l’exécution (ex : scripts bloqués), ouvrez PowerShell en tant qu’administrateur et exécutez :
 
 ```bash
