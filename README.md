@@ -18,3 +18,8 @@ pip install Pillow
 
 # 4. Lancer le serveur de développement
 py manage.py runserver
+
+
+👉 Ouvrez ensuite votre navigateur et accédez à l'adresse suivante :
+
+http://127.0.0.1:8000/
