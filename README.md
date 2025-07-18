@@ -23,5 +23,19 @@ py manage.py runserver
 
 
 👉 Ouvrez ensuite votre navigateur et accédez à l'adresse suivante :
-
+```bash
 http://127.0.0.1:8000/
+```
+
+⚠️ Résolution des problèmes avec PowerShell
+Si vous rencontrez des problèmes lors de l’exécution (ex : scripts bloqués), ouvrez PowerShell en tant qu’administrateur et exécutez :
+
+```bash
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+Pour revenir aux paramètres par défaut :
+
+```bash
+Set-ExecutionPolicy -ExecutionPolicy Default -Scope CurrentUser
+```
