@@ -39,3 +39,9 @@ Pour revenir aux paramètres par défaut :
 ```bash
 Set-ExecutionPolicy -ExecutionPolicy Default -Scope CurrentUser
 ```
+
+## Les outils utilisés : 
+- HTML.
+- CSS.
+- JS.
+- Django dans le backend.
